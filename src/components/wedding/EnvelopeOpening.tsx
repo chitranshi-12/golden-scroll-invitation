@@ -8,14 +8,16 @@ interface EnvelopeOpeningProps {
 }
 
 const EnvelopeOpening = ({ onComplete }: EnvelopeOpeningProps) => {
-  const [stage, setStage] = useState<"idle" | "opening" | "done">("idle");
+  const [stage, setStage] = useState<"idle" | "opening" | "invite" | "couple" | "done">("idle");
 
-  useEffect(() => {
-    const t1 = setTimeout(() => setStage("opening"), 1500);
-    const t2 = setTimeout(() => setStage("done"), 4000);
-    const t3 = setTimeout(onComplete, 5000);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, [onComplete]);
+  const handleClick = () => {
+    if (stage !== "idle") return;
+    setStage("opening");
+    setTimeout(() => setStage("invite"), 2000);
+    setTimeout(() => setStage("couple"), 4500);
+    setTimeout(() => setStage("done"), 6500);
+    setTimeout(onComplete, 7500);
+  };
 
   return (
     <AnimatePresence>
