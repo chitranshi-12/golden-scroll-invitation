@@ -9,16 +9,22 @@ interface EnvelopeOpeningProps {
   onComplete: () => void;
 }
 
+const CARD_WIDTH = 240;
+const CARD_HEIGHT = 300;
+const ENV_WIDTH = 260;
+const ENV_CLOSED_HEIGHT = 180;
+const ENV_OPEN_HEIGHT = 240;
+
 const EnvelopeOpening = ({ onComplete }: EnvelopeOpeningProps) => {
   const [stage, setStage] = useState<"closed" | "opening" | "card" | "couple" | "done">("closed");
 
   const handleClick = () => {
     if (stage !== "closed") return;
     setStage("opening");
-    setTimeout(() => setStage("card"), 800);
-    setTimeout(() => setStage("couple"), 5000);
-    setTimeout(() => setStage("done"), 7500);
-    setTimeout(onComplete, 8500);
+    setTimeout(() => setStage("card"), 600);
+    setTimeout(() => setStage("couple"), 5500);
+    setTimeout(() => setStage("done"), 8000);
+    setTimeout(onComplete, 9000);
   };
 
   return (
@@ -29,125 +35,116 @@ const EnvelopeOpening = ({ onComplete }: EnvelopeOpeningProps) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
         >
-          {/* Floating particles */}
-          {Array.from({ length: 15 }).map((_, i) => (
+          {/* Particles */}
+          {Array.from({ length: 12 }).map((_, i) => (
             <motion.div
               key={i}
-              className="absolute w-2 h-2 rounded-full"
+              className="absolute w-1.5 h-1.5 rounded-full"
               style={{
-                background: i % 2 === 0
-                  ? "hsl(var(--wedding-gold) / 0.5)"
-                  : "hsl(var(--wedding-rose) / 0.3)",
-                left: `${10 + Math.random() * 80}%`,
-                top: `${10 + Math.random() * 80}%`,
+                background: i % 2 === 0 ? "hsl(var(--wedding-gold) / 0.5)" : "hsl(var(--wedding-rose) / 0.3)",
+                left: `${15 + Math.random() * 70}%`,
+                top: `${15 + Math.random() * 70}%`,
               }}
-              animate={{ y: [0, -20, 0], opacity: [0, 0.7, 0], scale: [0.5, 1, 0.5] }}
-              transition={{ duration: 2.5 + Math.random() * 2, repeat: Infinity, delay: Math.random() * 2 }}
+              animate={{ y: [0, -20, 0], opacity: [0, 0.6, 0] }}
+              transition={{ duration: 3 + Math.random() * 2, repeat: Infinity, delay: Math.random() * 2 }}
             />
           ))}
 
           {/* Butterflies */}
-          <motion.img src={butterflyImg} alt="" className="absolute w-12 h-12 md:w-16 md:h-16" style={{ top: "8%", right: "15%" }}
-            animate={{ x: [0, 25, -10, 20, 0], y: [0, -15, 10, -25, 0], rotate: [0, 10, -5, 15, 0] }}
-            transition={{ duration: 6, repeat: Infinity }} loading="lazy" width={64} height={64}
+          <motion.img src={butterflyImg} alt="" className="absolute w-10 h-10 md:w-14 md:h-14" style={{ top: "10%", right: "15%" }}
+            animate={{ x: [0, 20, -8, 15, 0], y: [0, -12, 8, -18, 0], rotate: [0, 8, -4, 10, 0] }}
+            transition={{ duration: 6, repeat: Infinity }} loading="lazy" width={56} height={56}
           />
-          <motion.img src={butterflyImg} alt="" className="absolute w-10 h-10 md:w-12 md:h-12" style={{ bottom: "15%", left: "10%" }}
-            animate={{ x: [0, -15, 10, -20, 0], y: [0, 12, -8, 15, 0], rotate: [0, -8, 5, -12, 0] }}
-            transition={{ duration: 7, repeat: Infinity, delay: 1 }} loading="lazy" width={48} height={48}
+          <motion.img src={butterflyImg} alt="" className="absolute w-8 h-8 md:w-10 md:h-10" style={{ bottom: "18%", left: "12%" }}
+            animate={{ x: [0, -12, 8, -15, 0], y: [0, 10, -6, 12, 0] }}
+            transition={{ duration: 7, repeat: Infinity, delay: 1 }} loading="lazy" width={40} height={40}
           />
 
           {/* Couple photo stage */}
           <AnimatePresence>
             {stage === "couple" && (
-              <motion.div
-                key="couple"
-                className="absolute inset-0 flex items-center justify-center z-30 p-4"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1 }}
-              >
-                <motion.div
-                  className="relative rounded-2xl overflow-hidden shadow-2xl w-full max-w-sm"
-                  initial={{ scale: 0.85 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                >
-                  <img src={coupleImg} alt="The happy couple" className="w-full h-auto max-h-[60vh] object-cover" width={400} height={500} />
+              <motion.div key="couple" className="absolute inset-0 flex items-center justify-center z-30 p-6"
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 1 }}>
+                <motion.div className="relative rounded-2xl overflow-hidden shadow-2xl w-full max-w-xs"
+                  initial={{ scale: 0.85 }} animate={{ scale: 1 }} transition={{ duration: 1, ease: "easeOut" }}>
+                  <img src={coupleImg} alt="The happy couple" className="w-full h-auto max-h-[55vh] object-cover" width={320} height={400} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                   <motion.div className="absolute bottom-0 left-0 right-0 p-4 text-center"
-                    initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-                    <p className="font-script text-white text-2xl md:text-3xl drop-shadow-lg">Arjun & Priya</p>
-                    <p className="font-display text-white/90 text-xs tracking-[0.2em] uppercase mt-1">A love story begins</p>
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+                    <p className="font-script text-white text-2xl drop-shadow-lg">Arjun & Priya</p>
+                    <p className="font-display text-white/80 text-[10px] tracking-[0.2em] uppercase mt-0.5">A love story begins</p>
                   </motion.div>
                 </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Envelope + Card — all contained in a centered flex column */}
+          {/* Envelope + Card system */}
           {(stage === "closed" || stage === "opening" || stage === "card") && (
-            <div className="relative flex flex-col items-center justify-end" style={{ height: "80vh", maxHeight: 520 }}>
-
-              {/* Invitation card — rises from behind envelope */}
+            <motion.div
+              className="relative flex items-end justify-center"
+              style={{ width: ENV_WIDTH, height: stage === "card" ? CARD_HEIGHT + ENV_OPEN_HEIGHT - 40 : ENV_CLOSED_HEIGHT + 40 }}
+              animate={{ height: stage === "card" ? CARD_HEIGHT + ENV_OPEN_HEIGHT - 40 : ENV_CLOSED_HEIGHT + 40 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              {/* Card — positioned above envelope, hidden initially */}
               <motion.div
-                className="absolute z-10"
-                style={{ bottom: "50%" }}
-                initial={{ y: 60, opacity: 0 }}
+                className="absolute left-1/2 z-10"
+                style={{ marginLeft: -(CARD_WIDTH / 2) }}
+                initial={{ bottom: 20, opacity: 0 }}
                 animate={
                   stage === "card"
-                    ? { y: -10, opacity: 1 }
-                    : { y: 60, opacity: 0 }
+                    ? { bottom: ENV_OPEN_HEIGHT - 30, opacity: 1 }
+                    : { bottom: 20, opacity: 0 }
                 }
-                transition={{ duration: 1, ease: "easeOut" }}
+                transition={{ duration: 1, ease: [0.34, 1.56, 0.64, 1] }}
               >
-                <div className="bg-white rounded-lg shadow-xl px-5 py-6 md:px-7 md:py-8 text-center border border-wedding-gold/30 relative overflow-hidden"
-                  style={{ width: "min(260px, 70vw)" }}>
+                <div
+                  className="bg-white rounded-lg shadow-xl text-center border border-wedding-gold/30 relative overflow-hidden"
+                  style={{ width: CARD_WIDTH, padding: "20px 16px" }}
+                >
                   <div className="absolute inset-0 bg-gradient-to-br from-wedding-gold/5 to-wedding-rose/5" />
-                  <div className="relative">
-                    <div className="w-12 h-px bg-wedding-gold/40 mx-auto mb-3" />
-                    <motion.p className="font-script text-wedding-gold text-xl md:text-2xl mb-1"
-                      initial={{ opacity: 0 }} animate={stage === "card" ? { opacity: 1 } : {}} transition={{ delay: 0.4 }}>
+                  <div className="relative space-y-2">
+                    <div className="w-10 h-px bg-wedding-gold/40 mx-auto" />
+                    <motion.p className="font-script text-wedding-gold text-xl" initial={{ opacity: 0 }} animate={stage === "card" ? { opacity: 1 } : {}} transition={{ delay: 0.5 }}>
                       You're Invited
                     </motion.p>
-                    <motion.p className="font-display text-foreground/60 text-[10px] tracking-[0.2em] uppercase"
-                      initial={{ opacity: 0 }} animate={stage === "card" ? { opacity: 1 } : {}} transition={{ delay: 0.7 }}>
+                    <motion.p className="font-display text-foreground/60 text-[10px] tracking-[0.2em] uppercase" initial={{ opacity: 0 }} animate={stage === "card" ? { opacity: 1 } : {}} transition={{ delay: 0.8 }}>
                       to the wedding of
                     </motion.p>
-                    <motion.p className="font-script text-wedding-rose text-3xl md:text-4xl mt-2 leading-tight"
-                      initial={{ opacity: 0, scale: 0.9 }} animate={stage === "card" ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 1, duration: 0.6 }}>
-                      Arjun <span className="text-wedding-gold text-2xl">&</span> Priya
+                    <motion.p className="font-script text-wedding-rose text-3xl leading-tight" initial={{ opacity: 0 }} animate={stage === "card" ? { opacity: 1 } : {}} transition={{ delay: 1.1 }}>
+                      Arjun <span className="text-wedding-gold text-xl">&</span> Priya
                     </motion.p>
-                    <motion.div className="mt-2" initial={{ opacity: 0 }} animate={stage === "card" ? { opacity: 1 } : {}} transition={{ delay: 1.4 }}>
-                      <div className="w-8 h-px bg-wedding-gold/40 mx-auto mb-2" />
-                      <p className="font-display text-wedding-gold text-sm tracking-wider">December 15, 2026</p>
-                      <p className="font-body text-foreground/50 text-xs mt-0.5">The Grand Rose Garden, Jaipur</p>
+                    <motion.div initial={{ opacity: 0 }} animate={stage === "card" ? { opacity: 1 } : {}} transition={{ delay: 1.5 }}>
+                      <div className="w-8 h-px bg-wedding-gold/40 mx-auto mb-1.5" />
+                      <p className="font-display text-wedding-gold text-xs tracking-wider">December 15, 2026</p>
+                      <p className="font-body text-foreground/50 text-[10px] mt-0.5">The Grand Rose Garden, Jaipur</p>
                     </motion.div>
                   </div>
                 </div>
               </motion.div>
 
-              {/* Envelope — sized to match card width */}
+              {/* Envelope — sits at the bottom, always in front of card */}
               <motion.div
-                className="relative z-20 cursor-pointer"
+                className="absolute bottom-0 left-1/2 z-20 cursor-pointer"
+                style={{ marginLeft: -(ENV_WIDTH / 2), width: ENV_WIDTH }}
                 onClick={handleClick}
-                whileHover={stage === "closed" ? { scale: 1.04 } : {}}
+                whileHover={stage === "closed" ? { scale: 1.03, y: -2 } : {}}
                 whileTap={stage === "closed" ? { scale: 0.97 } : {}}
-                style={{ width: "min(260px, 70vw)" }}
               >
                 <AnimatePresence mode="wait">
                   {stage === "closed" && (
                     <motion.img
                       key="closed"
                       src={envelopeClosedImg}
-                      alt="Click to open envelope"
-                      className="w-full h-auto object-contain drop-shadow-xl"
-                      width={260}
-                      height={180}
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.4 }}
+                      alt="Click to open"
+                      className="w-full h-auto object-contain drop-shadow-lg"
+                      width={ENV_WIDTH}
+                      height={ENV_CLOSED_HEIGHT}
+                      initial={{ opacity: 0, scale: 0.92 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.3 }}
                     />
                   )}
                   {(stage === "opening" || stage === "card") && (
@@ -155,27 +152,29 @@ const EnvelopeOpening = ({ onComplete }: EnvelopeOpeningProps) => {
                       key="open"
                       src={envelopeOpenImg}
                       alt="Opened envelope"
-                      className="w-full h-auto object-contain drop-shadow-xl"
-                      width={260}
-                      height={180}
-                      initial={{ scale: 1.08, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.4 }}
+                      className="w-full h-auto object-contain drop-shadow-lg"
+                      width={ENV_WIDTH}
+                      height={ENV_OPEN_HEIGHT}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
                     />
                   )}
                 </AnimatePresence>
-
-                {stage === "closed" && (
-                  <motion.p
-                    className="absolute -bottom-8 left-1/2 -translate-x-1/2 font-script text-wedding-rose text-base whitespace-nowrap"
-                    animate={{ opacity: [0.4, 1, 0.4] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    Tap to open ✉
-                  </motion.p>
-                )}
               </motion.div>
-            </div>
+            </motion.div>
+          )}
+
+          {/* Tap hint — outside envelope container to avoid overflow */}
+          {stage === "closed" && (
+            <motion.p
+              className="absolute font-script text-wedding-rose text-base"
+              style={{ bottom: "12%" }}
+              animate={{ opacity: [0.4, 1, 0.4], y: [0, -3, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              Tap to open ✉
+            </motion.p>
           )}
         </motion.div>
       )}
