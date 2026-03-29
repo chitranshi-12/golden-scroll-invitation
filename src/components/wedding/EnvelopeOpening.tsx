@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import envelopeImg from "@/assets/envelope.png";
 import butterflyImg from "@/assets/butterfly.png";
 import coupleImg from "@/assets/couple-1.jpg";
@@ -11,23 +11,22 @@ interface EnvelopeOpeningProps {
 const EnvelopeOpening = ({ onComplete }: EnvelopeOpeningProps) => {
   const [stage, setStage] = useState<"idle" | "opening" | "invite" | "couple" | "done">("idle");
 
-  const handleClick = () => {
-    if (stage !== "idle") return;
-    setStage("opening");
-    setTimeout(() => setStage("invite"), 2000);
-    setTimeout(() => setStage("couple"), 5000);
-    setTimeout(() => setStage("done"), 7500);
-    setTimeout(onComplete, 8500);
-  };
+  useEffect(() => {
+    const t1 = setTimeout(() => setStage("opening"), 1500);
+    const t2 = setTimeout(() => setStage("invite"), 3500);
+    const t3 = setTimeout(() => setStage("couple"), 6500);
+    const t4 = setTimeout(() => setStage("done"), 9000);
+    const t5 = setTimeout(onComplete, 10000);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); clearTimeout(t5); };
+  }, [onComplete]);
 
   return (
     <AnimatePresence>
       {stage !== "done" && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-wedding-ivory cursor-pointer"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-wedding-ivory"
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
-          onClick={handleClick}
         >
           {/* Floating particles */}
           {Array.from({ length: 20 }).map((_, i) => (
@@ -87,15 +86,17 @@ const EnvelopeOpening = ({ onComplete }: EnvelopeOpeningProps) => {
           />
 
           <AnimatePresence mode="wait">
-            {/* Idle — Envelope waiting for click */}
-            {stage === "idle" && (
+            {(stage === "idle" || stage === "opening") && (
               <motion.div
                 key="envelope"
                 className="relative flex flex-col items-center"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1, y: [30, 0] }}
-                exit={{ scale: 0.3, opacity: 0, y: -100 }}
-                transition={{ duration: 1, ease: "easeInOut" }}
+                initial={{ scale: 0.8, opacity: 0, y: 30 }}
+                animate={
+                  stage === "opening"
+                    ? { scale: [1, 1.1, 0.2], opacity: [1, 1, 0], y: [0, -30, -150], rotate: [0, 5, -10] }
+                    : { scale: 1, opacity: 1, y: 0 }
+                }
+                transition={{ duration: stage === "opening" ? 1.8 : 1, ease: "easeInOut" }}
               >
                 <img
                   src={envelopeImg}
@@ -104,36 +105,18 @@ const EnvelopeOpening = ({ onComplete }: EnvelopeOpeningProps) => {
                   width={320}
                   height={320}
                 />
-                <motion.p
-                  className="mt-4 font-script text-wedding-rose text-xl whitespace-nowrap"
-                  animate={{ opacity: [0.4, 1, 0.4], scale: [0.98, 1.02, 0.98] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  Tap to open ✉
-                </motion.p>
+                {stage === "idle" && (
+                  <motion.p
+                    className="mt-4 font-script text-wedding-rose text-xl whitespace-nowrap"
+                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    Opening your invitation...
+                  </motion.p>
+                )}
               </motion.div>
             )}
 
-            {/* Opening — Envelope flies away */}
-            {stage === "opening" && (
-              <motion.div
-                key="opening-envelope"
-                className="relative"
-                initial={{ scale: 1, opacity: 1 }}
-                animate={{ scale: [1, 1.1, 0.2], opacity: [1, 1, 0], y: [0, -30, -150], rotate: [0, 5, -10] }}
-                transition={{ duration: 1.8, ease: "easeInOut" }}
-              >
-                <img
-                  src={envelopeImg}
-                  alt="Wedding Envelope"
-                  className="w-64 h-64 md:w-80 md:h-80 object-contain drop-shadow-2xl"
-                  width={320}
-                  height={320}
-                />
-              </motion.div>
-            )}
-
-            {/* Invite card */}
             {stage === "invite" && (
               <motion.div
                 key="invite-card"
@@ -146,44 +129,15 @@ const EnvelopeOpening = ({ onComplete }: EnvelopeOpeningProps) => {
                 <div className="bg-wedding-ivory rounded-2xl shadow-wedding p-8 md:p-12 text-center max-w-md mx-4 border-2 border-wedding-gold/40 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-wedding-gold/5 to-wedding-rose/5" />
                   <div className="relative">
-                    <motion.p
-                      className="font-script text-wedding-gold text-3xl md:text-4xl mb-3"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      You're Invited
-                    </motion.p>
-                    <motion.p
-                      className="font-display text-foreground/80 text-base tracking-[0.2em] uppercase"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.6 }}
-                    >
-                      to the wedding of
-                    </motion.p>
-                    <motion.p
-                      className="font-script text-wedding-rose text-5xl md:text-6xl mt-4"
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.9, duration: 0.8 }}
-                    >
-                      Arjun & Priya
-                    </motion.p>
-                    <motion.p
-                      className="font-display text-wedding-gold text-lg mt-4 tracking-wider"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 1.3 }}
-                    >
-                      December 15, 2026
-                    </motion.p>
+                    <motion.p className="font-script text-wedding-gold text-3xl md:text-4xl mb-3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>You're Invited</motion.p>
+                    <motion.p className="font-display text-foreground/80 text-base tracking-[0.2em] uppercase" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>to the wedding of</motion.p>
+                    <motion.p className="font-script text-wedding-rose text-5xl md:text-6xl mt-4" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.9, duration: 0.8 }}>Arjun & Priya</motion.p>
+                    <motion.p className="font-display text-wedding-gold text-lg mt-4 tracking-wider" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }}>December 15, 2026</motion.p>
                   </div>
                 </div>
               </motion.div>
             )}
 
-            {/* Couple photo reveal */}
             {stage === "couple" && (
               <motion.div
                 key="couple-reveal"
@@ -199,26 +153,11 @@ const EnvelopeOpening = ({ onComplete }: EnvelopeOpeningProps) => {
                   animate={{ scale: 1, rotateY: 0 }}
                   transition={{ duration: 1.5, ease: "easeOut" }}
                 >
-                  <img
-                    src={coupleImg}
-                    alt="The happy couple"
-                    className="w-full h-auto max-h-[70vh] object-cover"
-                    width={600}
-                    height={800}
-                  />
+                  <img src={coupleImg} alt="The happy couple" className="w-full h-auto max-h-[70vh] object-cover" width={600} height={800} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                  <motion.div
-                    className="absolute bottom-0 left-0 right-0 p-6 text-center"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8, duration: 0.8 }}
-                  >
-                    <p className="font-script text-white text-3xl md:text-4xl drop-shadow-lg">
-                      Arjun & Priya
-                    </p>
-                    <p className="font-display text-white/90 text-sm tracking-[0.2em] uppercase mt-1">
-                      A love story begins
-                    </p>
+                  <motion.div className="absolute bottom-0 left-0 right-0 p-6 text-center" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.8 }}>
+                    <p className="font-script text-white text-3xl md:text-4xl drop-shadow-lg">Arjun & Priya</p>
+                    <p className="font-display text-white/90 text-sm tracking-[0.2em] uppercase mt-1">A love story begins</p>
                   </motion.div>
                 </motion.div>
               </motion.div>
